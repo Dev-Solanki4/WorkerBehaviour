@@ -8,7 +8,7 @@ model = YOLO("yolov8n-pose.pt")  # Use 'yolov8m-pose.pt' for better accuracy
 def is_peace_sign(keypoints):
     """
     Check if the peace sign is shown by detecting if only index and middle fingers are extended.
-    """
+    """ 
     try:
         fingers = {
             "index": (8, 6),
