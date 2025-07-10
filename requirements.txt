@@ -1,0 +1,8 @@
+opencv-python
+mediapipe
+deepface
+scipy
+numpy
+pandas
+ultralytics
+insightface

@@ -1,4 +1,4 @@
-def run(frame_queue, running):  # ✅ CHANGED
+def run(frame_queue, running):
 
     import cv2
     import mediapipe as mp
@@ -18,7 +18,7 @@ def run(frame_queue, running):  # ✅ CHANGED
 
         print("[INFO] AdvancePoseEstimation process ready.")
 
-        while running.value:  # ✅ CHANGED
+        while running.value:  
             if frame_queue.empty():
                 continue
 
@@ -108,4 +108,4 @@ def run(frame_queue, running):  # ✅ CHANGED
             if cv2.waitKey(5) & 0xFF == 27:
                 break
 
-    cv2.destroyAllWindows()  # ✅ Moved outside loop
+    cv2.destroyAllWindows()  

@@ -3,20 +3,23 @@ import cv2
 import time
 
 import FaceRecognitionPersonal
+import FaceRecogInsight
+import MultiPoseEstimation
 import AdvancePoseEstimation
 import StickFigure
 
 def frame_producer(frame_queue, running):
     cap = cv2.VideoCapture(0)
+    # cap = cv2.VideoCapture(r"C:\Users\dev.solanki\OneDrive - HRPL RESTAURANTS PRIVATE LIMITED\Desktop\CON_CUP_LINE-1_Hocco_Hocco_20250620090000_20250620091058_135481.mp4")
 
-    if not cap.isOpened():
-        print("[ERROR] Cannot access the webcam")
-        running.value = False
-        return
+    # if not cap.isOpened():
+    #     print("[ERROR] Cannot access the webcam")
+    #     running.value = False
+    #     return
 
-    print("[INFO] Webcam started. Press ESC to stop.")
+    # print("[INFO] Webcam started. Press ESC to stop.")
 
-    while running.value:
+    while True:
         ret, frame = cap.read()
         if not ret:
             print("[ERROR] Failed to grab frame")
@@ -42,8 +45,8 @@ if __name__ == "__main__":
     running = multiprocessing.Value('b', True)  # shared flag
 
     # Start consumers
-    p1 = multiprocessing.Process(target=FaceRecognitionPersonal.run, args=(frame_queue, running))
-    p2 = multiprocessing.Process(target=AdvancePoseEstimation.run, args=(frame_queue, running))
+    p1 = multiprocessing.Process(target=FaceRecogInsight.run, args=(frame_queue, running))
+    p2 = multiprocessing.Process(target=MultiPoseEstimation.run, args=(frame_queue, running))
     p3 = multiprocessing.Process(target=StickFigure.run, args=(frame_queue, running))
 
     # Start producer
