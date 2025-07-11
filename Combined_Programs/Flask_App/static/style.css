@@ -1,0 +1,30 @@
+body {
+  font-family: Arial;
+  background: #f7f7f7;
+  margin: 20px;
+}
+header {
+  background: #007bff;
+  padding: 10px;
+  color: white;
+  border-radius: 8px;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+}
+th, td {
+  border: 1px solid #ccc;
+  padding: 8px;
+}
+tr:nth-child(even) {
+  background: #eef;
+}
+a.btn {
+  background: #28a745;
+  color: white;
+  padding: 6px 12px;
+  text-decoration: none;
+  border-radius: 5px;
+}

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Activity Log for Worker ID {{ worker_id }}</h2>
+<a href="/" class="btn">⬅ Back</a>
+<table>
+  <thead>
+    <tr><th>Time</th><th>Activity</th><th>Camera</th></tr>
+  </thead>
+  <tbody>
+    {% for row in logs.itertuples() %}
+    <tr>
+      <td>{{ row.timestamp }}</td>
+      <td>{{ row.activity }}</td>
+      <td>{{ row.camera_id }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

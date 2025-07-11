@@ -9,8 +9,8 @@ import AdvancePoseEstimation
 import StickFigure
 
 def frame_producer(frame_queue, running):
-    cap = cv2.VideoCapture(0)
-    # cap = cv2.VideoCapture(r"C:\Users\dev.solanki\OneDrive - HRPL RESTAURANTS PRIVATE LIMITED\Desktop\CON_CUP_LINE-1_Hocco_Hocco_20250620090000_20250620091058_135481.mp4")
+    # cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(r"C:\Users\dev.solanki\OneDrive - HRPL RESTAURANTS PRIVATE LIMITED\Desktop\CON_CUP_LINE-1_Hocco_Hocco_20250620090000_20250620091058_135481.mp4")
 
     # if not cap.isOpened():
     #     print("[ERROR] Cannot access the webcam")

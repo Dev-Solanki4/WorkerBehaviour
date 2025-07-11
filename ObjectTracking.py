@@ -8,6 +8,8 @@ import mediapipe as mp
 cap = cv2.VideoCapture(0)
 model = YOLO("yolov8n.pt")
 tracker = DeepSort(max_age=30, n_init=3, nms_max_overlap=1.0, max_cosine_distance=0.2)
+cap.set(3,1280)
+cap.set(4,720)
 
 mpHands = mp.solutions.hands
 mpDraw = mp.solutions.drawing_utils

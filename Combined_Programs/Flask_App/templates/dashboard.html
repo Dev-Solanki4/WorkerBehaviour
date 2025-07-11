@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Recent Worker Activity Logs</h2>
+<a href="/export" class="btn">📥 Export CSV</a>
+<table>
+  <thead>
+    <tr><th>ID</th><th>Time</th><th>Worker</th><th>Activity</th><th>Camera</th></tr>
+  </thead>
+  <tbody>
+    {% for row in logs.itertuples() %}
+    <tr>
+      <td>{{ row.id }}</td>
+      <td>{{ row.timestamp }}</td>
+      <td><a href="/worker/{{ row.worker_id }}">{{ row.worker_id }}</a></td>
+      <td>{{ row.activity }}</td>
+      <td>{{ row.camera_id }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
