@@ -1,37 +1,47 @@
-from flask import Flask, render_template, request, send_file
+from flask import Flask, render_template, send_file
 import sqlite3
 import pandas as pd
 from io import BytesIO
+import time
+import os
 
 app = Flask(__name__)
 
-# Connect to DB
-DB_PATH = "../activity_log.db"  # Adjust if needed
+# Adjust this depending on where you run the Flask app from
+DB_PATH = "../activity_log.db"  # or "activity_log.db" if in same folder
 
-def get_logs():
+def get_stats():
     conn = sqlite3.connect(DB_PATH)
-    df = pd.read_sql_query("SELECT * FROM ActivityLog ORDER BY timestamp DESC", conn)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM WorkerStats ORDER BY worker_id")
+    rows = cursor.fetchall()
+    columns = [description[0] for description in cursor.description]
     conn.close()
-    return df
+
+    def format_time(seconds):
+        return time.strftime('%H:%M:%S', time.gmtime(seconds))
+
+    stats = [
+        {col: format_time(val) if 'time' in col else val for col, val in zip(columns, row)}
+        for row in rows
+    ]
+    return stats
 
 @app.route("/")
 def dashboard():
-    logs = get_logs().head(50)  # Show recent 50
-    return render_template("dashboard.html", logs=logs)
-
-@app.route("/worker/<int:worker_id>")
-def worker_logs(worker_id):
-    df = get_logs()
-    filtered = df[df["worker_id"] == worker_id]
-    return render_template("worker_logs.html", logs=filtered, worker_id=worker_id)
+    stats = get_stats()
+    return render_template("dashboard.html", stats=stats)
 
 @app.route("/export")
 def export_logs():
-    df = get_logs()
+    conn = sqlite3.connect(DB_PATH)
+    df = pd.read_sql_query("SELECT * FROM WorkerStats", conn)
+    conn.close()
     output = BytesIO()
     df.to_csv(output, index=False)
     output.seek(0)
-    return send_file(output, mimetype='text/csv', download_name="activity_log.csv", as_attachment=True)
+    return send_file(output, mimetype='text/csv', download_name="worker_stats.csv", as_attachment=True)
 
 if __name__ == "__main__":
+    print("Running from:", os.getcwd())
     app.run(debug=True)

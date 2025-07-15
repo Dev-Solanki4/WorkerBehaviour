@@ -12,12 +12,13 @@ def run(frame_queue, running):
     conn = sqlite3.connect("activity_log.db", check_same_thread=False)
     cursor = conn.cursor()
     cursor.execute("""
-        CREATE TABLE IF NOT EXISTS ActivityLog (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            timestamp TEXT,
-            worker_id INTEGER,
-            activity TEXT,
-            camera_id TEXT
+        CREATE TABLE IF NOT EXISTS WorkerStats (
+            worker_id INTEGER PRIMARY KEY,
+            standing_time INTEGER DEFAULT 0,
+            sitting_time INTEGER DEFAULT 0,
+            crouching_time INTEGER DEFAULT 0,
+            working_time INTEGER DEFAULT 0,
+            idle_time INTEGER DEFAULT 0
         )
     """)
     conn.commit()
@@ -117,14 +118,42 @@ def run(frame_queue, running):
                 )
                 activity = statistics.mode(state["buf"])
 
-                # ───── Log if activity changed ─────
-                if state["last_activity"] != activity:
+                # ───── Real-time update in WorkerStats DB ─────
+                # Initialize row if not exists
+                cursor.execute("""
+                    INSERT OR IGNORE INTO WorkerStats (worker_id)
+                    VALUES (?)
+                """, (wid,))
+                conn.commit()
+
+                # Update time in relevant columns
+                activity_map = {
+                    "Standing": "standing_time",
+                    "Sitting": "sitting_time",
+                    "Crouching": "crouching_time"
+                }
+                posture_col = activity_map.get(posture)
+                if posture_col:
+                    cursor.execute(f"""
+                        UPDATE WorkerStats
+                        SET {posture_col} = {posture_col} + 1
+                        WHERE worker_id = ?
+                    """, (wid,))
+
+                if "Working" in activity:
                     cursor.execute("""
-                        INSERT INTO ActivityLog (timestamp, worker_id, activity, camera_id)
-                        VALUES (datetime('now'), ?, ?, ?)
-                    """, (wid, activity, "CAM1"))  # Adjust camera_id if needed
-                    conn.commit()
-                    state["last_activity"] = activity
+                        UPDATE WorkerStats
+                        SET working_time = working_time + 1
+                        WHERE worker_id = ?
+                    """, (wid,))
+                else:
+                    cursor.execute("""
+                        UPDATE WorkerStats
+                        SET idle_time = idle_time + 1
+                        WHERE worker_id = ?
+                    """, (wid,))
+                conn.commit()
+
 
                 # ───── Draw box & label ─────
                 x1, y1, x2, y2 = map(int, box.xyxy[0])

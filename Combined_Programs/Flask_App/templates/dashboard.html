@@ -1,21 +1,31 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Recent Worker Activity Logs</h2>
-<a href="/export" class="btn">📥 Export CSV</a>
+<h2>Real-Time Worker Activity Summary</h2>
 <table>
   <thead>
-    <tr><th>ID</th><th>Time</th><th>Worker</th><th>Activity</th><th>Camera</th></tr>
+    <tr>
+      <th>Worker ID</th>
+      <th>Standing</th>
+      <th>Sitting</th>
+      <th>Crouching</th>
+      <th>Working</th>
+      <th>Idle</th>
+    </tr>
   </thead>
   <tbody>
-    {% for row in logs.itertuples() %}
+    {% for row in stats %}
     <tr>
-      <td>{{ row.id }}</td>
-      <td>{{ row.timestamp }}</td>
-      <td><a href="/worker/{{ row.worker_id }}">{{ row.worker_id }}</a></td>
-      <td>{{ row.activity }}</td>
-      <td>{{ row.camera_id }}</td>
+      <td>{{ row.worker_id }}</td>
+      <td>{{ row.standing_time }}</td>
+      <td>{{ row.sitting_time }}</td>
+      <td>{{ row.crouching_time }}</td>
+      <td>{{ row.working_time }}</td>
+      <td>{{ row.idle_time }}</td>
     </tr>
     {% endfor %}
   </tbody>
 </table>
+<script>
+  setTimeout(() => location.reload(), 3000);  // Auto-refresh every 3 sec
+</script>
 {% endblock %}
